@@ -22,10 +22,14 @@ class LocalDeepONet_oneDim(nn.Module):
             ], nn.Linear(n_hidden, n_hidden))
         for i in range(n_layers)])
 
-  def forward(self, x, branch):
+  def forward(self, x_in, boundary):
+    x = 0. + x_in
     x = self.in_trunk(x)
     x = self.hid_trunk(x)
+    branch = 0. + boundary
     branch = self.in_branch(branch)
     branch = self.hid_branch(branch)
+    #use DeepXDE
+    out = (x_in - 4*torch.pi)*(x_in - 2*torch.pi )*x_in*torch.sum(x*branch, 1).view(-1,1) + boundary
 
-    return torch.sum(x*branch, 1).view(-1,1)
+    return out
