@@ -16,7 +16,7 @@ def D_loc(u, boundary_t, boundary_value , t_grid, f_out, alpha, beta , device = 
 #define PINN loss function for global solutions:
 def D_glob(u,local_solutions,boundary_t, boundary_rep, boundary_clust,   t_grid, rep_grid, clust_grid , boundary_value , f_out,  alpha, beta ):
 
-  u_out,_ = u(t_grid, rep_grid,clust_grid,  local_solutions)
+  u_out = u(t_grid, rep_grid,clust_grid,  local_solutions)
   dudt = torch.autograd.grad(u_out, t_grid, torch.ones_like(t_grid), create_graph = True, allow_unused=True)[0]
 
 
