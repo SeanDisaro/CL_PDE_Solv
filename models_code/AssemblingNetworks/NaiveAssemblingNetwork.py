@@ -35,4 +35,4 @@ class NaiveAssemblingNetwork(nn.Module):
 
 
 
-    return out , boundary
+    return out

@@ -12,9 +12,9 @@ class ResAssemblingNetwork(nn.Module):
 
     self.assemblerNetwork_in = nn.Linear(1,n_hidden_assembler)
 
-    self.assemblerNetwork_hid_list = [
+    self.assemblerNetwork_hid_list = nn.ModuleList([
             nn.Linear(n_hidden_assembler, n_hidden_assembler)
-        for _ in range(n_layers_assembler)]
+        for _ in range(n_layers_assembler)])
 
     self.assemblerNetwork_out = nn.Linear(n_hidden_assembler,1)
 
@@ -33,7 +33,10 @@ class ResAssemblingNetwork(nn.Module):
 
 
 
+
+
   def forward(self, t, t_representant, i,  local_solutions ):
+
     boundary_input = torch.cat([t,i],  dim = 1)
 
     boundary = self.boundaryNetwork_in(boundary_input)
@@ -45,6 +48,7 @@ class ResAssemblingNetwork(nn.Module):
     mask_1 = (i == 1)
 
 
+
     out = local_solutions[0](t_representant, boundary) * mask_0
     out = out + local_solutions[1](t_representant, boundary) *mask_1
 
@@ -53,8 +57,9 @@ class ResAssemblingNetwork(nn.Module):
 
     #ResNet for hid layers:
     for layer in self.assemblerNetwork_hid_list:
-      out = out + torch.nn.functional.tanh(layer(out))
 
+      out = nn.functional.tanh(layer(out)) # +out 
+    
     out = self.assemblerNetwork_out(out)
 
     return out
